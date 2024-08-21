@@ -9,6 +9,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState(null);
+  const [selectBtn, setSelectBtn] = useState("all");
 
   useEffect(() => {
     const fetchFoodData = async () => {
@@ -42,6 +43,38 @@ const App = () => {
     }
   };
 
+  const filterFoodBtn = (type) => {
+    if (type === "all") {
+      setFilteredData(data);
+      setSelectBtn("all");
+      return;
+    }
+    const filtered = data.filter((food) =>
+      food.type.toLowerCase().includes(type)
+    );
+    setFilteredData(filtered);
+    setSelectBtn(type);
+  };
+
+  const btn = [
+    {
+      name: "All",
+      type: "all",
+    },
+    {
+      name: "Breakfast",
+      type: "breakfast",
+    },
+    {
+      name: "Lunch",
+      type: "lunch",
+    },
+    {
+      name: "Dinner",
+      type: "dinner",
+    },
+  ];
+
   if (error) return <div>{error}</div>;
   if (loading) return <div>Loading...</div>;
 
@@ -56,10 +89,11 @@ const App = () => {
         </div>
       </TopContainer>
       <FilterContainer>
-        <Button>All</Button>
-        <Button>Breakfast</Button>
-        <Button>Lunch</Button>
-        <Button>Dinner</Button>
+        {btn.map((item, index) => (
+          <Button key={index} onClick={() => filterFoodBtn(item.type)}>
+            {item.name}
+          </Button>
+        ))}
       </FilterContainer>
       <SearchResult data={filteredData} />
     </Container>
@@ -88,6 +122,16 @@ const TopContainer = styled.section`
       font-size: 16px;
       padding: 0 10px;
       height: 40px;
+    }
+  }
+  @media (width <= 1250px) {
+    flex-direction: column;
+    gap: 1.5rem;
+    .search {
+      width: 90%;
+      input {
+        width: 100%;
+      }
     }
   }
 `;
